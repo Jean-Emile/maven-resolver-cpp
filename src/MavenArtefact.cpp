@@ -1,4 +1,4 @@
-#include "MavenArtefact.h"
+#include "api/MavenArtefact.h"
 
 MavenArtefact::MavenArtefact()
 {

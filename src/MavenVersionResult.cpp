@@ -1,4 +1,4 @@
-#include "MavenVersionResult.h"
+#include "api/MavenVersionResult.h"
 #include <stdlib.h>     /* atol */
 
 MavenVersionResult::MavenVersionResult()

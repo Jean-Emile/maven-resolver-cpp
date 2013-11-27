@@ -3,19 +3,16 @@
 
 #include <string>
 #include <stdio.h>
-#include <vector>
+#include <list>
 #include "MavenVersionResolver.h"
-
-
-
-  
+#include <fstream>
   
 class MavenResolver
 {
 public:
 	MavenResolver();
 	virtual ~MavenResolver();
-	FILE * resolve(std::string group, std::string name, std::string versionAsked, std::string extension, std::vector<std::string> urls);
+	std::string resolve(std::string group, std::string name, std::string versionAsked, std::string extension, std::list<std::string> urls);
 	
 private:
 	MavenVersionResolver *versionResolver;

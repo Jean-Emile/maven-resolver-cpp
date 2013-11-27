@@ -1,4 +1,4 @@
-#include "MavenVersionResolver.h"
+#include "api/MavenVersionResolver.h"
 
 MavenVersionResolver::MavenVersionResolver()
 {
