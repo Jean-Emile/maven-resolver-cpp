@@ -18,7 +18,6 @@ MavenResolver::~MavenResolver()
 
 std::string MavenResolver::resolve(std::string group, std::string name, std::string versionAsked, std::string extension, std::list<std::string> urls)
 {
-
 	if(name.compare("CPPNodeType") == 0)
 	{
 		return "build/libkevoree-CPPNode.so";
@@ -26,8 +25,15 @@ std::string MavenResolver::resolve(std::string group, std::string name, std::str
 	
 	if(name.compare("kevoree-group-websocket")==0)
 	{
+
 		return "build/libwebsocketgroup.so";
 	}
+	if(name.compare("HelloWorldComponent")==0)
+	{
+
+		return "build/libhelloworld_component.so";
+	}
+	
 	return "";
 			//const char *libpath= "build/libwebsocketgroup.so";
     MavenArtefact artefact;
