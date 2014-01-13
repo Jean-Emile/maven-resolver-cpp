@@ -1,5 +1,6 @@
 #ifndef MAVENARTEFACT_H_
 #define MAVENARTEFACT_H_
+
 #include <string>
 class MavenArtefact
 {

@@ -1,13 +1,13 @@
-#include "api/MavenVersionResult.h"
 #include <stdlib.h>     /* atol */
+#include <iostream>
 
-MavenVersionResult::MavenVersionResult()
-{
+#include "maven-resolver/api/MavenVersionResult.h"
+
+MavenVersionResult::MavenVersionResult() {
 	notDeployed = false;
 }
 
-MavenVersionResult::~MavenVersionResult()
-{
+MavenVersionResult::~MavenVersionResult() {
 }
 
 std::string MavenVersionResult::getLastUpdate() {
@@ -15,7 +15,7 @@ std::string MavenVersionResult::getLastUpdate() {
 }
 
 void MavenVersionResult::setLastUpdate(std::string lastUpdate) {
-	lastUpdate = lastUpdate;
+	this->lastUpdate = lastUpdate;
 }
 
 std::string MavenVersionResult::getValue() {
@@ -23,7 +23,7 @@ std::string MavenVersionResult::getValue() {
 }
 
 void MavenVersionResult::setValue(std::string value) {
-	value = value;
+	this->value = value;
 }
 
 std::string MavenVersionResult::getUrl_origin() {
@@ -31,12 +31,16 @@ std::string MavenVersionResult::getUrl_origin() {
 }
 
 void MavenVersionResult::setUrl_origin(std::string url_origin) {
-	url_origin = url_origin;
+	this->url_origin = url_origin;
 }
 
-
 bool MavenVersionResult::isPrior(MavenVersionResult remote) {
-	return atol(lastUpdate.c_str()) < atol(remote.lastUpdate.c_str());
+	try {
+		return atol(lastUpdate.c_str()) < atol(remote.lastUpdate.c_str());
+	} catch (std::exception & e) {
+		std::cerr << "Bad timestamp for the artifact" << std::endl;
+		return false;
+	}
 }
 
 bool MavenVersionResult::isNotDeployed() {
@@ -44,5 +48,5 @@ bool MavenVersionResult::isNotDeployed() {
 }
 
 void MavenVersionResult::setNotDeployed(bool notDeployed) {
-	notDeployed = notDeployed;
+	this->notDeployed = notDeployed;
 }
