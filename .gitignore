@@ -1,3 +1,7 @@
-/CMakeFiles/
-/Makefile
-/*.cmake
+**build
+**/CMakeFiles/
+**/Makefile
+**/*.cmake
+**settings
+**.cproject
+**.project
