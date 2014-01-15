@@ -5,18 +5,21 @@
  *      Author: edaubert
  */
 #include <network/http/api/HTTPResponseImpl.h>
-
+#include <sstream>
 namespace network {
 namespace http {
 namespace api {
 
 HTTPResponseImpl::HTTPResponseImpl() {
 	status = internal_server_error;
-	stream = new std::istream(0);
+	stream = NULL;
 }
 
 HTTPResponseImpl::~HTTPResponseImpl() {
-	delete stream;
+	if(stream != NULL)
+	{
+		delete stream;
+	}
 }
 
 void HTTPResponseImpl::addHeader(std::string _name, std::string _value) {
@@ -58,30 +61,9 @@ std::string HTTPResponseImpl::getHeader(std::string _name) {
 }
 
 std::string HTTPResponseImpl::getContentAsString() {
-	/*stream->seekg(0, stream->end);
-	 int length = stream->tellg();
-	 stream->seekg(0, stream->beg);
-	 std::cout<< length << std::endl;
-	 char * bytes = new char[length];
-	 stream->read(bytes, length);
-	 std::string * content = new std::string();*/
-	/*stream->seekg(0, stream->end);
-	 int length = stream->tellg();
-	 stream->seekg(0, stream->beg);
-
-	 std::string str;
-	 str.resize(length, ' '); // reserve space
-	 char* begin = &*str.begin();
-
-	 stream->read(begin, length);*/
-	std::string content;
-	while (!stream->eof()) {
-		std::string s;
-		std::getline(*stream, s);
-		content.append(s);
-		content.append("\n");
-	}
-	return content;
+	std::ostringstream out;
+	out << stream->rdbuf();
+	return out.str();
 }
 //short int * HTTPResponseImpl::getContent() {
 //}
