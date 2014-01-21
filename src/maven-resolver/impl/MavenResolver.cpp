@@ -50,8 +50,8 @@ std::string MavenResolver::resolve(maven_resolver::api::MavenArtefact artefact, 
 			maven_resolver::api::MavenVersionResult* tmpVersion = versionResolver->foundRelevantVersion(artefact, basePath, *it, false);
 			if (tmpVersion != NULL) {
 				artefact.setVersion(versionComparator->max(artefact.getVersion(), tmpVersion->getValue()));
-				delete tmpVersion;
 			}
+			delete tmpVersion;
 		}
 	}
 
