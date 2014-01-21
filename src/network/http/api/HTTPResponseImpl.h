@@ -31,7 +31,7 @@ public:
 	std::string getContentAsString();
 //	short int * getContent();
 //	long getContentLength();
-	std::istream& getStream();
+	std::istream * getStream();
 
 	void addHeader(std::string _name, std::string _value);
 	void removeHeader(std::string _name);

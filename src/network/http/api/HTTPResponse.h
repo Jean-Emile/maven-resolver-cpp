@@ -28,7 +28,7 @@ public:
 	virtual std::string getContentAsString() = 0;
 //	virtual short int * getContent() = 0;
 //	virtual long getContentLength() = 0;
-	virtual std::istream& getStream() = 0;
+	virtual std::istream * getStream() = 0;
 };
 
 }

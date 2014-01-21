@@ -69,8 +69,8 @@ std::string HTTPResponseImpl::getContentAsString() {
 //}
 //long HTTPResponseImpl::getContentLength() {
 //}
-std::istream& HTTPResponseImpl::getStream() {
-	return *stream;
+std::istream* HTTPResponseImpl::getStream() {
+	return stream;
 }
 }
 }

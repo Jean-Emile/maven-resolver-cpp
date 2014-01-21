@@ -11,20 +11,19 @@ namespace network {
 namespace http {
 namespace impl {
 
-BoostHTTPClient::BoostHTTPClient() :
-		network::http::api::HTTPClient() {
+BoostHTTPClient::BoostHTTPClient() : network::http::api::HTTPClient() {
+}
+BoostHTTPClient::~BoostHTTPClient() {
 }
 
 bool BoostHTTPClient::isHTTPURL(std::string const& url) {
 	//std::cout << url.find_first_of(http) << std::endl;
 	//std::cout << url.find_first_of(https) << std::endl;
-	return url.find_first_of(network::http::api::http) == 0
-			|| url.find_first_of(network::http::api::https) == 0;
+	return url.find_first_of(network::http::api::http) == 0 || url.find_first_of(network::http::api::https) == 0;
 }
 
 // parsedResults is an array[3]
-std::string * BoostHTTPClient::parseURL(std::string const& url,
-		std::string parsedResults[]) {
+std::string * BoostHTTPClient::parseURL(std::string const& url, std::string parsedResults[]) {
 
 	std::string newURL = url;
 	if (newURL.find_first_of(network::http::api::http) == 0) {
@@ -54,8 +53,7 @@ std::string * BoostHTTPClient::parseURL(std::string const& url,
 	return parsedResults;
 }
 
-network::http::api::HTTPResponse * BoostHTTPClient::doGet(
-		network::http::api::HTTPRequest const& request) {
+network::http::api::HTTPResponse * BoostHTTPClient::doGet(network::http::api::HTTPRequest const& request) {
 
 	// check if the url is an http(s) one
 	if (BoostHTTPClient::isHTTPURL(request.getUrl())) {
@@ -71,8 +69,7 @@ network::http::api::HTTPResponse * BoostHTTPClient::doGet(
 		// Get a list of endpoints corresponding to the server name.
 		boost::asio::ip::tcp::resolver resolver(io_service);
 		boost::asio::ip::tcp::resolver::query query(values[0], "http");
-		boost::asio::ip::tcp::resolver::iterator endpoint_iterator =
-				resolver.resolve(query);
+		boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
 
 		// Try each endpoint until we successfully establish a connection.
 		boost::asio::ip::tcp::socket socket(io_service);
@@ -81,17 +78,17 @@ network::http::api::HTTPResponse * BoostHTTPClient::doGet(
 		// Form the request. We specify the "Connection: close" header so that the
 		// server will close the socket after transmitting the response. This will
 		// allow us to treat all data up until the EOF as the content.
-		boost::asio::streambuf request;
-		std::ostream request_stream(&request);
+		boost::asio::streambuf requestStream;
+		std::ostream request_stream(&requestStream);
 		request_stream << "GET " << values[2] << " HTTP/1.0\r\n";
 		request_stream << "Host: " << values[0] << ":" << values[1] << "\r\n";
 		request_stream << "Accept: */*\r\n";
 		request_stream << "Connection: close\r\n\r\n";
 
-		// TODO use a request as param and add headers
+		// TODO use the request and add headers
 
 		// Send the request.
-		boost::asio::write(socket, request);
+		boost::asio::write(socket, requestStream);
 
 		// Read the response status line. The response streambuf will automatically
 		// grow to accommodate the entire line. The growth may be limited by passing
@@ -111,14 +108,11 @@ network::http::api::HTTPResponse * BoostHTTPClient::doGet(
 			std::cerr << "Invalid response\n";
 			//return 1;
 		}
-		if (status_code != 200) {
-			std::cerr << "Response returned with status code " << status_code
-					<< std::endl;
-			//return 1;
-		}
+//		if (status_code != 200) {
+//			std::cerr << "Response returned with status code " << status_code << " for url: " << request.getUrl() << std::endl;
+//		}
 
-		network::http::api::HTTPResponseImpl * responseResult =
-				new network::http::api::HTTPResponseImpl();
+		network::http::api::HTTPResponseImpl * responseResult = new network::http::api::HTTPResponseImpl();
 
 		responseResult->setStatus(network::http::api::Status(status_code));
 
@@ -138,24 +132,16 @@ network::http::api::HTTPResponse * BoostHTTPClient::doGet(
 
 		// Read until EOF, reading data and storing it into response buffer
 		boost::system::error_code error;
-		while (boost::asio::read(socket, *response,
-				boost::asio::transfer_at_least(1), error)) {
+		while (boost::asio::read(socket, *response, boost::asio::transfer_at_least(1), error)) {
 			// boost::asio::error::eof correspond to the end of the stream
 			// boost::system::errc::success correspond to the end of the request (with success as a result)
-			if (error != boost::asio::error::eof
-					&& error != boost::system::errc::success) {
+			if (error != boost::asio::error::eof && error != boost::system::errc::success) {
 //				std::cout << std::endl << error << std::endl;
 				throw boost::system::system_error(error);
 			}
 		}
 		response->commit(response->in_avail());
 		std::istream * contentStream = new std::istream(response);
-
-//		while (!contentStream->eof()) {
-//			std::string s;
-//			std::getline(*contentStream, s);
-//			std::cout << s << std::endl;
-//		}
 
 		responseResult->setStream(contentStream);
 		return responseResult;
