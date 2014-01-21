@@ -3,38 +3,38 @@
 
 #include "maven-resolver/api/MavenVersionResult.h"
 
-MavenVersionResult::MavenVersionResult() {
+maven_resolver::api::MavenVersionResult::MavenVersionResult() {
 	notDeployed = false;
 }
 
-MavenVersionResult::~MavenVersionResult() {
+maven_resolver::api::MavenVersionResult::~MavenVersionResult() {
 }
 
-std::string MavenVersionResult::getLastUpdate() {
+std::string maven_resolver::api::MavenVersionResult::getLastUpdate() {
 	return lastUpdate;
 }
 
-void MavenVersionResult::setLastUpdate(std::string lastUpdate) {
-	this->lastUpdate = lastUpdate;
+void maven_resolver::api::MavenVersionResult::setLastUpdate(std::string _lastUpdate) {
+	lastUpdate = _lastUpdate;
 }
 
-std::string MavenVersionResult::getValue() {
+std::string maven_resolver::api::MavenVersionResult::getValue() {
 	return value;
 }
 
-void MavenVersionResult::setValue(std::string value) {
-	this->value = value;
+void maven_resolver::api::MavenVersionResult::setValue(std::string _value) {
+	value = _value;
 }
 
-std::string MavenVersionResult::getUrl_origin() {
+std::string maven_resolver::api::MavenVersionResult::getUrl_origin() {
 	return url_origin;
 }
 
-void MavenVersionResult::setUrl_origin(std::string url_origin) {
-	this->url_origin = url_origin;
+void maven_resolver::api::MavenVersionResult::setUrl_origin(std::string _url_origin) {
+	url_origin = _url_origin;
 }
 
-bool MavenVersionResult::isPrior(MavenVersionResult remote) {
+bool maven_resolver::api::MavenVersionResult::isPrior(MavenVersionResult remote) {
 	try {
 		return atol(lastUpdate.c_str()) < atol(remote.lastUpdate.c_str());
 	} catch (std::exception & e) {
@@ -43,10 +43,14 @@ bool MavenVersionResult::isPrior(MavenVersionResult remote) {
 	}
 }
 
-bool MavenVersionResult::isNotDeployed() {
+bool maven_resolver::api::MavenVersionResult::isNotDeployed() {
 	return notDeployed;
 }
 
-void MavenVersionResult::setNotDeployed(bool notDeployed) {
-	this->notDeployed = notDeployed;
+void maven_resolver::api::MavenVersionResult::setNotDeployed(bool _notDeployed) {
+	notDeployed = _notDeployed;
+}
+
+std::string maven_resolver::api::MavenVersionResult::toString() {
+	return url_origin + " -> " + value + "/" + lastUpdate;
 }

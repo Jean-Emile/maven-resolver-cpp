@@ -13,10 +13,32 @@
 namespace maven_resolver {
 namespace api {
 
+class VersionItem {
+private:
+	int major;
+	int minor;
+	int incremental;
+	std::string qualifier;
+
+public:
+	void setMajor(int major);
+	void setMinor(int minor);
+	void setIncremental(int incremental);
+	void setQualifier(std::string qualifier);
+	int getMajor();
+	int getMinor();
+	int getIncremental();
+	std::string getQualifier();
+	int compare(VersionItem anotherVersion);
+};
+
 class MavenVersionComparator {
 public:
 	std::string max(std::string version, std::string otherVersion);
+private:
+	maven_resolver::api::VersionItem * parseVersion(std::string version);
 };
+
 }
 }
 
