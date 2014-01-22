@@ -21,7 +21,8 @@ maven_resolver::impl::MavenDownloader::~MavenDownloader() {
 	delete client;
 }
 
-bool maven_resolver::impl::MavenDownloader::downloadArtefact(std::string targetFilePath, maven_resolver::api::MavenArtefact artefact, std::string resolvedVersion, std::list<std::string> repoUrls) {
+bool maven_resolver::impl::MavenDownloader::downloadArtefact(std::string targetFilePath, maven_resolver::api::MavenArtefact artefact, std::string resolvedVersion,
+		std::list<std::string> repoUrls) {
 
 	for (std::list<std::string>::iterator it = repoUrls.begin(); it != repoUrls.end(); it++) {
 		try {
@@ -38,7 +39,8 @@ bool maven_resolver::impl::MavenDownloader::downloadArtefact(std::string targetF
 	return false;
 
 }
-bool maven_resolver::impl::MavenDownloader::downloadMetadata(std::string targetFilePath, maven_resolver::api::MavenArtefact artefact, std::string resolvedVersion, std::list<std::string> repoUrls) {
+bool maven_resolver::impl::MavenDownloader::downloadMetadata(std::string targetFilePath, maven_resolver::api::MavenArtefact artefact, std::string resolvedVersion,
+		std::list<std::string> repoUrls) {
 	for (std::list<std::string>::iterator it = repoUrls.begin(); it != repoUrls.end(); it++) {
 		try {
 			//BUILD HTTP URL
@@ -79,7 +81,7 @@ bool maven_resolver::impl::MavenDownloader::downloadFile(std::string targetFileP
 		delete response;
 		return true;
 	} else {
-//		std::cout << "HTTP Status of the response (" << response->getStatus() << ") is not fine" << std::endl;
+//		std::cerr << "HTTP Status of the response (" << response->getStatus() << ") for url: " << url << std::endl;
 		return false;
 	}
 }
@@ -95,8 +97,13 @@ std::string maven_resolver::impl::MavenDownloader::buildUrl(maven_resolver::api:
 	url.append(urlSeparator);
 	url.append(artefact.getName());
 	url.append(urlSeparator);
-	url.append(artefact.getVersion());
-	url.append(urlSeparator);
+
+	std::string askedVersion = maven_resolver::api::toLower(artefact.getVersion());
+	if (askedVersion.compare("release") != 0 && askedVersion.compare("latest") != 0) {
+		url.append(artefact.getVersion());
+		url.append(urlSeparator);
+	}
+
 	if (metaFile) {
 		url.append(maven_resolver::api::metaFile);
 	} else {
@@ -110,6 +117,7 @@ std::string maven_resolver::impl::MavenDownloader::buildUrl(maven_resolver::api:
 		url.append(".");
 		url.append(artefact.getExtension());
 	}
+//	std::cout << "URL to use: " << url << std::endl;
 	return url;
 }
 

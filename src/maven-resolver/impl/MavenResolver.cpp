@@ -34,26 +34,30 @@ std::string MavenResolver::resolve(maven_resolver::api::MavenArtefact artefact, 
 
 	std::string versionToLower = maven_resolver::api::toLower(artefact.getVersion()); //transform(artefact.getVersion().begin(), artefact.getVersion().end(), artefact.getVersion().begin(), tolower);
 	if (versionToLower.compare("release") == 0 || versionToLower.compare("latest") == 0) {
-		maven_resolver::api::MavenVersionResult* vremoteSaved = versionResolver->foundRelevantVersion(artefact, basePath, basePath, false);
-		maven_resolver::api::MavenVersionResult* vlocalSaved = versionResolver->foundRelevantVersion(artefact, basePath, basePath, true);
-		if (vremoteSaved != NULL) {
-			artefact.setVersion(versionComparator->max(artefact.getVersion(), vremoteSaved->getValue()));
-		}
+//		maven_resolver::api::MavenVersionResult* vremoteSaved = versionResolver->foundRelevantVersion(artefact, basePath, basePath, false);
+		maven_resolver::api::MavenVersionResult* vlocalSaved = versionResolver->foundRelevantVersion(artefact, basePath, "", true);
+//		if (vremoteSaved != NULL) {
+//			artefact.setVersion(versionComparator->max(artefact.getVersion(), vremoteSaved->getValue()));
+//		}
 		if (vlocalSaved != NULL) {
+//			std::cout << "Compare current version to the one get from the local repository" << std::endl;
 			artefact.setVersion(versionComparator->max(artefact.getVersion(), vlocalSaved->getValue()));
 		}
-		delete vremoteSaved;
+//		delete vremoteSaved;
 		delete vlocalSaved;
 
 		//FIXME managing multi threading for resolving version on each repositories
 		for (std::list<std::string>::iterator it = urls.begin(); it != urls.end(); it++) {
 			maven_resolver::api::MavenVersionResult* tmpVersion = versionResolver->foundRelevantVersion(artefact, basePath, *it, false);
 			if (tmpVersion != NULL) {
+//				std::cout << "Compare current version to the one get from the repo: " << *it << std::endl;
 				artefact.setVersion(versionComparator->max(artefact.getVersion(), tmpVersion->getValue()));
 			}
 			delete tmpVersion;
 		}
 	}
+
+//	std::cout << artefact.getVersion() << std::endl;
 
 	if (artefact.getVersion().find(maven_resolver::api::SNAPSHOT_VERSION_END) == std::string::npos) {
 		// try to find release artifact
@@ -99,6 +103,12 @@ std::string MavenResolver::resolve(maven_resolver::api::MavenArtefact artefact, 
 				versions.push_back(version);
 			}
 		}
+
+//		std::cout << "Potential versions: ";
+//		for (std::list<maven_resolver::api::MavenVersionResult*>::iterator it = versions.begin(); it != versions.end(); it++) {
+//			std::cout << (*it)->getValue() << ", ";
+//		}
+//		std::cout << std::endl;
 
 		if (versions.size() == 0) {
 			//not version at all , try simply the file with -SNAPSHOT extension

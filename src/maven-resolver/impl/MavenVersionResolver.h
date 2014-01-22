@@ -30,7 +30,7 @@ public:
 
 	maven_resolver::api::MavenVersionResult * resolveVersion(maven_resolver::api::MavenArtefact artefact, std::string cachePath, std::string remoteURL, bool localDeploy);
 	maven_resolver::api::MavenVersionResult* foundRelevantVersion(maven_resolver::api::MavenArtefact artefact, std::string basePath, std::string remoteURL, bool localDeploy);
-	std::string buildCacheFilePath(maven_resolver::api::MavenArtefact artefact, std::string basePath, std::string remoteURL);
+	std::string buildCacheFilePath(maven_resolver::api::MavenArtefact artefact, std::string basePath, std::string remoteURL, bool localDeploy);
 };
 }
 }
