@@ -16,6 +16,7 @@ MavenResolver::MavenResolver() {
 MavenResolver::~MavenResolver() {
 	delete versionResolver;
 	delete versionComparator;
+	delete mavenDownloader;
 
 }
 
@@ -70,7 +71,9 @@ std::string MavenResolver::resolve(maven_resolver::api::MavenArtefact artefact, 
 		filePath.append(".");
 		filePath.append(artefact.getExtension());
 		std::fstream targetReleaseFile(filePath.c_str());
-		if (targetReleaseFile.good()) {
+		bool isGood = targetReleaseFile.good();
+		targetReleaseFile.close();
+		if (isGood) {
 			return filePath;
 		} else {
 			maven_resolver::api::mkdirs(filePath);
@@ -119,7 +122,9 @@ std::string MavenResolver::resolve(maven_resolver::api::MavenArtefact artefact, 
 			filePath.append(".");
 			filePath.append(artefact.getExtension());
 			std::fstream snapshotFile(filePath.c_str());
-			if (snapshotFile.good()) {
+			bool isGood = snapshotFile.good();
+			snapshotFile.close();
+			if (isGood) {
 				return filePath;
 			} else {
 				std::cerr << "No metadata file found for " << artefact.getGroup() << "/" << artefact.getName() << "/" << artefact.getVersion();
@@ -129,6 +134,7 @@ std::string MavenResolver::resolve(maven_resolver::api::MavenArtefact artefact, 
 			maven_resolver::api::MavenVersionResult * bestVersion = NULL;
 			for (std::list<maven_resolver::api::MavenVersionResult*>::iterator it = versions.begin(); it != versions.end(); it++) {
 				if (bestVersion == NULL || bestVersion->isPrior(**it)) {
+					delete bestVersion;
 					bestVersion = *it;
 				}
 			}
@@ -150,10 +156,13 @@ std::string MavenResolver::resolve(maven_resolver::api::MavenArtefact artefact, 
 					} else { //TAKE directly -snapshot file
 						filePath.append(artefact.getVersion());
 					}
+					delete bestVersion;
 					filePath.append(".");
 					filePath.append(artefact.getExtension());
 					std::fstream snapshotFile(filePath.c_str(), std::ios_base::in | std::ios_base::out);
-					if (snapshotFile.good()) {
+					bool isGood = snapshotFile.good();
+					snapshotFile.close();
+					if (isGood) {
 						return filePath;
 					} else {
 						//This is really bad... try to get remotely
@@ -161,6 +170,7 @@ std::string MavenResolver::resolve(maven_resolver::api::MavenArtefact artefact, 
 						maven_resolver::api::MavenVersionResult * bestRemoteVersion = NULL;
 						for (std::list<maven_resolver::api::MavenVersionResult*>::iterator it = versions.begin(); it != versions.end(); it++) {
 							if ((*it)->getUrl_origin().compare(basePath) != 0 && (bestRemoteVersion == NULL || bestRemoteVersion->isPrior(**it))) {
+								delete bestRemoteVersion;
 								bestRemoteVersion = *it;
 							}
 						}
@@ -170,10 +180,11 @@ std::string MavenResolver::resolve(maven_resolver::api::MavenArtefact artefact, 
 						if (preresolvedVersion2.find(firstPartVersion2) != 0) {
 							preresolvedVersion2 = firstPartVersion2 + bestRemoteVersion->getValue();
 						}
+						delete bestRemoteVersion;
 						//Ok try on all urls, meta file has been download but not the artefact :(
 						if (mavenDownloader->downloadArtefact(filePath, artefact, preresolvedVersion2, urls)) {
 							//download the metafile
-							std::cout << "File resolved remotly, download metafile" << std::endl;
+//							std::cout << "File resolved remotly, download metafile" << std::endl;
 							std::string metaFilePath = filePath.substr(0, filePath.find_last_of(maven_resolver::api::fileSeparator)) + maven_resolver::api::fileSeparator
 									+ maven_resolver::api::metaFile;
 							maven_resolver::api::mkdirs(metaFilePath);
@@ -181,7 +192,7 @@ std::string MavenResolver::resolve(maven_resolver::api::MavenArtefact artefact, 
 							mavenDownloader->downloadMetadata(metaFilePath, artefact, preresolvedVersion2, urls);
 							return filePath;
 						}
-						std::cerr << ">" + bestVersion->toString() << std::endl;
+//						std::cerr << ">" + bestVersion->toString() << std::endl;
 						return "";
 					}
 				} else {
@@ -193,30 +204,34 @@ std::string MavenResolver::resolve(maven_resolver::api::MavenArtefact artefact, 
 					filePath.append(".");
 					filePath.append(artefact.getExtension());
 					std::fstream targetSnapshotFile(filePath.c_str(), std::ios_base::in | std::ios_base::out);
-					if (targetSnapshotFile.good()) {
+					bool isGood = targetSnapshotFile.good();
+					targetSnapshotFile.close();
+					if (isGood) {
+						delete bestVersion;
 						return filePath;
 					} else {
 						std::list<std::string> goodUrl;
 						goodUrl.push_back(bestVersion->getUrl_origin());
-						std::cout << "Trying to download artefact on " << bestVersion->getUrl_origin() << std::endl;
+						delete bestVersion;
+//						std::cout << "Trying to download artefact on " << bestVersion->getUrl_origin() << std::endl;
 						if (mavenDownloader->downloadArtefact(filePath, artefact, preresolvedVersion, goodUrl)) {
-							std::cout << "File resolved remotly, download metafile" << std::endl;
+//							std::cout << "File resolved remotly, download metafile" << std::endl;
 							//download the metafile
 							std::string metaFilePath = filePath.substr(0, filePath.find_last_of(maven_resolver::api::fileSeparator)) + maven_resolver::api::fileSeparator
 									+ maven_resolver::api::metaFile;
 							maven_resolver::api::mkdirs(metaFilePath);
-//							std::fstream newMetaFile(metaFilePath.c_str());
 							mavenDownloader->downloadMetadata(metaFilePath, artefact, preresolvedVersion, goodUrl);
 							return filePath;
 						}
 						//not found
-						std::cout << "Not resolved " << preresolvedVersion << " from " << bestVersion->getUrl_origin() << "/" << artefact.getGroup() << "/" << artefact.getName()
-								<< "/" << artefact.getVersion() << std::endl;
+//						std::cout << "Not resolved " << preresolvedVersion << " from " << bestVersion->getUrl_origin() << "/" << artefact.getGroup() << "/" << artefact.getName()
+//								<< "/" << artefact.getVersion() << std::endl;
 						return "";
 					}
 				}
 			} else {
-				std::cerr << "Not best version are found for " << artefact.getGroup() << "/" << artefact.getName() << "/" << artefact.getVersion() << std::endl;
+//				std::cerr << "Not best version are found for " << artefact.getGroup() << "/" << artefact.getName() << "/" << artefact.getVersion() << std::endl;
+				delete bestVersion;
 				return "";
 			}
 		}

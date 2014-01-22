@@ -18,6 +18,7 @@ HTTPResponseImpl::HTTPResponseImpl() {
 HTTPResponseImpl::~HTTPResponseImpl() {
 	if(stream != NULL)
 	{
+		delete stream->rdbuf();
 		delete stream;
 	}
 }

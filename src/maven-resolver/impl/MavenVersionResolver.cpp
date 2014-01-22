@@ -12,6 +12,7 @@ maven_resolver::impl::MavenVersionResolver::MavenVersionResolver() {
 }
 
 maven_resolver::impl::MavenVersionResolver::~MavenVersionResolver() {
+	delete mavenDownloader;
 }
 
 maven_resolver::api::MavenVersionResult* maven_resolver::impl::MavenVersionResolver::resolveVersion(maven_resolver::api::MavenArtefact artefact, std::string cachePath,

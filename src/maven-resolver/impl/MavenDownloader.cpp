@@ -68,6 +68,7 @@ bool maven_resolver::impl::MavenDownloader::downloadFile(std::string targetFileP
 	request.setUrl(url);
 	network::http::api::HTTPResponse * response = client->doGet(request);
 
+	bool result;
 	if (response->getStatus() == network::http::api::ok) {
 		std::ofstream file;
 		file.open(targetFilePath.c_str(), openMode);
@@ -78,12 +79,13 @@ bool maven_resolver::impl::MavenDownloader::downloadFile(std::string targetFileP
 		file.flush();
 		file.close();
 //		std::cout << "File saved on " << targetFilePath << std::endl;
-		delete response;
-		return true;
+		result = true;
 	} else {
 //		std::cerr << "HTTP Status of the response (" << response->getStatus() << ") for url: " << url << std::endl;
-		return false;
+		result = false;
 	}
+	delete response;
+	return result;
 }
 
 std::string maven_resolver::impl::MavenDownloader::buildUrl(maven_resolver::api::MavenArtefact artefact, std::string resolvedVersion, std::string repoUrl, bool metaFile) {

@@ -112,8 +112,11 @@ std::string maven_resolver::api::MavenVersionComparator::max(std::string version
 	maven_resolver::api::VersionItem* v2c = parseVersion(anotherVersion);
 
 //	std::cout << version << " compare to " << anotherVersion << " == " << v1c->compare(*v2c) << std::endl;
+	bool compare = v1c->compare(*v2c) < 0;
+	delete v1c;
+	delete v2c;
 
-	if (v1c->compare(*v2c) < 0) {
+	if (compare) {
 //		std::cout << "Return " << version << std::endl;
 		return version;
 	} else {

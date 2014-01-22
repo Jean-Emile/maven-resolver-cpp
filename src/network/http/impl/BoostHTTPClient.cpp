@@ -59,7 +59,7 @@ network::http::api::HTTPResponse * BoostHTTPClient::doGet(network::http::api::HT
 	if (BoostHTTPClient::isHTTPURL(request.getUrl())) {
 		// parse url to get host, port and uri
 		// return an array of 3 string
-		std::string values[3];
+		std::string * values = new std::string[3];
 		parseURL(request.getUrl(), values);
 
 		//std::cout << "Host: " << values[0] << std::endl << "Port: " << values[1] << std::endl << "Query: " << values[2] << std::endl;
@@ -86,6 +86,8 @@ network::http::api::HTTPResponse * BoostHTTPClient::doGet(network::http::api::HT
 		request_stream << "Connection: close\r\n\r\n";
 
 		// TODO use the request and add headers
+
+		delete[] values;
 
 		// Send the request.
 		boost::asio::write(socket, requestStream);
