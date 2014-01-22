@@ -19,6 +19,7 @@ namespace api {
 class HTTPClient {
 
 public:
+	virtual ~HTTPClient() {};
 	virtual bool isHTTPURL(std::string const& url) = 0;
 	virtual network::http::api::HTTPResponse * doGet(network::http::api::HTTPRequest const& request) = 0;
 //	void doPOST(std::string url, std::string content);

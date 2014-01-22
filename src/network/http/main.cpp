@@ -10,17 +10,21 @@ int main(int argc, char **argv) {
 	network::http::api::HTTPRequest request;
 	request.addHeader("User-Agent", "Kevoree");
 	request.setUrl("http://www.google.fr");
+
+
 	network::http::api::HTTPResponse * response = client->doGet(request);
-	std::cout << response->getContentAsString() << std::endl;
+//	std::cout << response->getContentAsString() << std::endl;
 
 	delete response;
 
-	request.setUrl(
-			"http://oss.sonatype.org/service/local/repositories/releases/content/org/kevoree/org.kevoree.api/3.1.0/org.kevoree.api-3.1.0.pom");
-	response = client->doGet(request);
-	std::cout << response->getContentAsString() << std::endl;
+//	request.setUrl(
+//			"http://oss.sonatype.org/service/local/repositories/releases/content/org/kevoree/org.kevoree.api/3.1.0/org.kevoree.api-3.1.0.pom");
+//	response = client->doGet(request);
+//	std::cout << response->getContentAsString() << std::endl;
+//
+//	delete response;
 
-	delete response;
+	delete client;
 
 	/*request.setUrl(
 	 "http://oss.sonatype.org/service/local/repositories/releases/content/org/kevoree/org.kevoree.api/3.1.0/org.kevoree.api-3.1.0.jar");

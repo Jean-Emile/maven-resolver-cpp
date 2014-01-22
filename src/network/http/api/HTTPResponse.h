@@ -20,8 +20,7 @@ namespace api {
 class HTTPResponse {
 
 public:
-//	HTTPResponse();
-//	~HTTPResponse();
+	virtual ~HTTPResponse() {};
 	virtual Status getStatus() = 0;
 	virtual std::map<std::string, std::string> getHeaders() = 0;
 	virtual std::string getHeader(std::string _name) = 0;

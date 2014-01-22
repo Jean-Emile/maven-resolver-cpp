@@ -15,6 +15,7 @@ HTTPResponseImpl::HTTPResponseImpl() {
 	stream = NULL;
 }
 
+
 HTTPResponseImpl::~HTTPResponseImpl() {
 	if(stream != NULL)
 	{
