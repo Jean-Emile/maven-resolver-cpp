@@ -11,7 +11,10 @@
 
 #include <boost/filesystem.hpp>
 
-std::string maven_resolver::api::replace(std::string strToModify, std::string toReplace, std::string replacement) {
+namespace maven {
+namespace resolver {
+
+std::string replace(std::string strToModify, std::string toReplace, std::string replacement) {
 	int index = 0;
 	index = strToModify.find(toReplace, index);
 	while (index != std::string::npos) {
@@ -21,14 +24,14 @@ std::string maven_resolver::api::replace(std::string strToModify, std::string to
 	return strToModify;
 }
 
-std::string maven_resolver::api::toLower(std::string content) {
+std::string toLower(std::string content) {
 	for (int q = 0; q < content.length(); q++) {
 		content[q] = std::tolower(content[q]);
 	}
 	return content;
 }
 
-std::string maven_resolver::api::trim(std::string str) {
+std::string trim(std::string str) {
     std::string::size_type begin=0;
     std::string::size_type end=str.size()-1;
     while(begin<=end && (str[begin]<=0x20 || str[begin]==0x7f))
@@ -40,7 +43,7 @@ std::string maven_resolver::api::trim(std::string str) {
 }
 
 
-std::string maven_resolver::api::readFile(std::string filePath) {
+std::string readFile(std::string filePath) {
 	std::fstream file(filePath.c_str(), std::fstream::in);
 	if (file.good()) {
 		std::string result;
@@ -56,6 +59,9 @@ std::string maven_resolver::api::readFile(std::string filePath) {
 	}
 }
 
-bool maven_resolver::api::mkdirs(std::string filePath) {
+bool mkdirs(std::string filePath) {
 	return boost::filesystem::create_directories(boost::filesystem::path(filePath).parent_path());
+}
+
+}
 }

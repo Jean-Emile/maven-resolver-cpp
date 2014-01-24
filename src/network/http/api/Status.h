@@ -10,7 +10,6 @@
 
 namespace network {
 namespace http {
-namespace api {
 
 enum Status {
 	ok = 200,
@@ -30,7 +29,6 @@ enum Status {
 	bad_gateway = 502,
 	service_unavailable = 503
 };
-}
 }
 }
 

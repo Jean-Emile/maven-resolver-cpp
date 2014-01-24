@@ -5,23 +5,27 @@
  *      Author: edaubert
  */
 
-#include <maven-resolver/impl/MavenDownloader.h>
+#include <maven-resolver/api/MavenDownloader.h>
 
 #include <iostream>
 #include <fstream>
 
 #include <maven-resolver/api/Utilities.h>
 #include <network/http/api/HTTPRequest.h>
+#include <network/http/impl/BoostHTTPClient.h>
 
-maven_resolver::impl::MavenDownloader::MavenDownloader() {
-	client = new network::http::impl::BoostHTTPClient();
+namespace maven {
+namespace resolver {
+
+MavenDownloader::MavenDownloader() {
+	client = new network::http::BoostHTTPClient();
 }
 
-maven_resolver::impl::MavenDownloader::~MavenDownloader() {
+MavenDownloader::~MavenDownloader() {
 	delete client;
 }
 
-bool maven_resolver::impl::MavenDownloader::downloadArtefact(std::string targetFilePath, maven_resolver::api::MavenArtefact artefact, std::string resolvedVersion,
+bool MavenDownloader::downloadArtefact(std::string targetFilePath, MavenArtefact artefact, std::string resolvedVersion,
 		std::list<std::string> repoUrls) {
 
 	for (std::list<std::string>::iterator it = repoUrls.begin(); it != repoUrls.end(); it++) {
@@ -39,7 +43,7 @@ bool maven_resolver::impl::MavenDownloader::downloadArtefact(std::string targetF
 	return false;
 
 }
-bool maven_resolver::impl::MavenDownloader::downloadMetadata(std::string targetFilePath, maven_resolver::api::MavenArtefact artefact, std::string resolvedVersion,
+bool MavenDownloader::downloadMetadata(std::string targetFilePath, MavenArtefact artefact, std::string resolvedVersion,
 		std::list<std::string> repoUrls) {
 	for (std::list<std::string>::iterator it = repoUrls.begin(); it != repoUrls.end(); it++) {
 		try {
@@ -55,21 +59,21 @@ bool maven_resolver::impl::MavenDownloader::downloadMetadata(std::string targetF
 	}
 	return false;
 }
-//bool maven_resolver::impl::MavenDownloader::downloadPom(
+//bool MavenDownloader::downloadPom(
 //		std::string targetFilePath, MavenArtefact, std::string extension,
 //		std::string resolvedVersion, std::list<std::string> repoUrls) {
 //	return downloadFile(targetFilePath, , ios::out | ios::trunc);
 //}
 
-bool maven_resolver::impl::MavenDownloader::downloadFile(std::string targetFilePath, std::string url, std::ios_base::openmode openMode) {
+bool MavenDownloader::downloadFile(std::string targetFilePath, std::string url, std::ios_base::openmode openMode) {
 
-	network::http::api::HTTPRequest request;
+	network::http::HTTPRequest request;
 	request.addHeader("User-Agent", "KevoreeMavenResolver-cpp");
 	request.setUrl(url);
-	network::http::api::HTTPResponse * response = client->doGet(request);
+	network::http::HTTPResponse * response = client->doGet(request);
 
 	bool result;
-	if (response->getStatus() == network::http::api::ok) {
+	if (response->getStatus() == network::http::ok) {
 		std::ofstream file;
 		file.open(targetFilePath.c_str(), openMode);
 		std::istream * stream = response->getStream();
@@ -88,26 +92,26 @@ bool maven_resolver::impl::MavenDownloader::downloadFile(std::string targetFileP
 	return result;
 }
 
-std::string maven_resolver::impl::MavenDownloader::buildUrl(maven_resolver::api::MavenArtefact artefact, std::string resolvedVersion, std::string repoUrl, bool metaFile) {
+std::string MavenDownloader::buildUrl(MavenArtefact artefact, std::string resolvedVersion, std::string repoUrl, bool metaFile) {
 
 	std::string url;
 	url.append(repoUrl);
 	url.append(urlSeparator);
 	std::string newString(artefact.getGroup());
-	newString = maven_resolver::api::replace(newString, ".", urlSeparator);
+	newString = replace(newString, ".", urlSeparator);
 	url.append(newString);
 	url.append(urlSeparator);
 	url.append(artefact.getName());
 	url.append(urlSeparator);
 
-	std::string askedVersion = maven_resolver::api::toLower(artefact.getVersion());
+	std::string askedVersion = toLower(artefact.getVersion());
 	if (askedVersion.compare("release") != 0 && askedVersion.compare("latest") != 0) {
 		url.append(artefact.getVersion());
 		url.append(urlSeparator);
 	}
 
 	if (metaFile) {
-		url.append(maven_resolver::api::metaFile);
+		url.append(maven::resolver::metaFile);
 	} else {
 		url.append(artefact.getName());
 		url.append("-");
@@ -123,3 +127,6 @@ std::string maven_resolver::impl::MavenDownloader::buildUrl(maven_resolver::api:
 	return url;
 }
 
+
+}
+}

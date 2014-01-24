@@ -13,9 +13,8 @@
 
 namespace network {
 namespace http {
-namespace impl {
 
-class BoostHTTPClient: public network::http::api::HTTPClient {
+class BoostHTTPClient: public HTTPClient {
 private:
 	boost::asio::io_service io_service;
 
@@ -23,12 +22,11 @@ public:
 	BoostHTTPClient();
 	~BoostHTTPClient();
 	bool isHTTPURL(std::string const& url);
-	network::http::api::HTTPResponse * doGet(network::http::api::HTTPRequest const& request);
+	HTTPResponse * doGet(HTTPRequest const& request);
 
 private:
 	std::string * parseURL(std::string const& url, std::string parsedResults[]);
 };
-}
 }
 }
 

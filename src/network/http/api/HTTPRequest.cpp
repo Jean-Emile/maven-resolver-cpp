@@ -5,13 +5,10 @@
  *      Author: edaubert
  */
 
-#include <map>
-
 #include <network/http/api/HTTPRequest.h>
 
 namespace network {
 namespace http {
-namespace api {
 void HTTPRequest::setMethod(std::string _method) {
 	method = _method;
 }
@@ -42,7 +39,6 @@ std::string const& HTTPRequest::getHttpVersion() const {
 }
 std::map<std::string, std::string> const& HTTPRequest::getHeaders() const {
 	return headers;
-}
 }
 }
 }
