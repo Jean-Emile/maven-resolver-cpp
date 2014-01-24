@@ -10,7 +10,6 @@
 
 namespace network {
 namespace http {
-namespace api {
 
 const std::string http = "http://";
 const std::string https = "https://";
@@ -110,7 +109,6 @@ const int DEFAULT_PORT = 80;
 const int DEFAULT_CHUNK_SIZE = 512 * 1024;
 const int DEFAULT_TIMEOUT = 30;
 
-}
 }
 }
 #endif /* HTTP_H_ */

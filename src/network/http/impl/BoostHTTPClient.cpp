@@ -9,9 +9,8 @@
 
 namespace network {
 namespace http {
-namespace impl {
 
-BoostHTTPClient::BoostHTTPClient() : network::http::api::HTTPClient() {
+BoostHTTPClient::BoostHTTPClient(){
 }
 BoostHTTPClient::~BoostHTTPClient() {
 }
@@ -19,17 +18,17 @@ BoostHTTPClient::~BoostHTTPClient() {
 bool BoostHTTPClient::isHTTPURL(std::string const& url) {
 	//std::cout << url.find_first_of(http) << std::endl;
 	//std::cout << url.find_first_of(https) << std::endl;
-	return url.find_first_of(network::http::api::http) == 0 || url.find_first_of(network::http::api::https) == 0;
+	return url.find_first_of(http) == 0 || url.find_first_of(https) == 0;
 }
 
 // parsedResults is an array[3]
 std::string * BoostHTTPClient::parseURL(std::string const& url, std::string parsedResults[]) {
 
 	std::string newURL = url;
-	if (newURL.find_first_of(network::http::api::http) == 0) {
-		newURL = newURL.substr(network::http::api::http.length());
-	} else if (newURL.find_first_of(network::http::api::https) == 0) {
-		newURL = newURL.substr(network::http::api::https.length());
+	if (newURL.find_first_of(http) == 0) {
+		newURL = newURL.substr(http.length());
+	} else if (newURL.find_first_of(https) == 0) {
+		newURL = newURL.substr(https.length());
 	}
 
 	std::size_t position = newURL.find_first_of("/");
@@ -53,7 +52,7 @@ std::string * BoostHTTPClient::parseURL(std::string const& url, std::string pars
 	return parsedResults;
 }
 
-network::http::api::HTTPResponse * BoostHTTPClient::doGet(network::http::api::HTTPRequest const& request) {
+HTTPResponse * BoostHTTPClient::doGet(HTTPRequest const& request) {
 
 	// check if the url is an http(s) one
 	if (BoostHTTPClient::isHTTPURL(request.getUrl())) {
@@ -114,9 +113,9 @@ network::http::api::HTTPResponse * BoostHTTPClient::doGet(network::http::api::HT
 //			std::cerr << "Response returned with status code " << status_code << " for url: " << request.getUrl() << std::endl;
 //		}
 
-		network::http::api::HTTPResponseImpl * responseResult = new network::http::api::HTTPResponseImpl();
+		HTTPResponseImpl * responseResult = new network::http::HTTPResponseImpl();
 
-		responseResult->setStatus(network::http::api::Status(status_code));
+		responseResult->setStatus(Status(status_code));
 
 		// Read the response headers, which are terminated by a blank line.
 		boost::asio::read_until(socket, *response, "\r\n\r\n");
@@ -152,6 +151,5 @@ network::http::api::HTTPResponse * BoostHTTPClient::doGet(network::http::api::HT
 	}
 }
 
-}
 }
 }

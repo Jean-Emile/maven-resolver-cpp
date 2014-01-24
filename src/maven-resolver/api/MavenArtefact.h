@@ -3,8 +3,8 @@
 
 #include <string>
 
-namespace maven_resolver {
-namespace api {
+namespace maven {
+namespace resolver {
 class MavenArtefact {
 public:
 	MavenArtefact();

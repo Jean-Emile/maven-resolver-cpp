@@ -5,17 +5,15 @@
  *      Author: edaubert
  */
 
-#include <maven-resolver/impl/MavenResolver.h>
+#include <maven-resolver/api/MavenResolver.h>
 
 #include <iostream>
 #include <iterator>
 #include <string>
 #include <boost/regex.hpp>
 
-using namespace std;
-
 int main(int argc, char **argv) {
-	MavenResolver resolver;
+	maven::resolver::MavenResolver resolver;
 
 	std::list<std::string> urls;
 	urls.push_back("http://oss.sonatype.org/service/local/repositories/releases/content/");

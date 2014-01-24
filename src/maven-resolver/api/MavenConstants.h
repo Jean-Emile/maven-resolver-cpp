@@ -8,8 +8,8 @@
 #ifndef MAVENCONSTANTS_H_
 #define MAVENCONSTANTS_H_
 
-namespace maven_resolver {
-namespace api {
+namespace maven {
+namespace resolver {
 const std::string release = "release";
 const std::string latest = "latest";
 

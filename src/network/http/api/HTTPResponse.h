@@ -16,7 +16,6 @@
 
 namespace network {
 namespace http {
-namespace api {
 class HTTPResponse {
 
 public:
@@ -30,7 +29,6 @@ public:
 	virtual std::istream * getStream() = 0;
 };
 
-}
 }
 }
 #endif /* RESPONSE_H_ */

@@ -14,8 +14,8 @@
 #define PATH_SEPARATOR "/"
 #endif
 
-namespace maven_resolver {
-namespace api {
+namespace maven {
+namespace resolver {
 const std::string fileSeparator = PATH_SEPARATOR;
 
 std::string replace(std::string strToModify, std::string toReplace, std::string replacement);

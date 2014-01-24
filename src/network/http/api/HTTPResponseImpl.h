@@ -12,8 +12,7 @@
 
 namespace network {
 namespace http {
-namespace api {
-class HTTPResponseImpl : public network::http::api::HTTPResponse {
+class HTTPResponseImpl : public HTTPResponse {
 private:
 	Status status;
 	/// The headers to be included in the reply.
@@ -39,7 +38,6 @@ public:
 	void setStream(std::istream * _stream);
 
 };
-}
 }
 }
 

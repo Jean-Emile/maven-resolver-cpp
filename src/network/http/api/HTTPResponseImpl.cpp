@@ -8,7 +8,6 @@
 #include <sstream>
 namespace network {
 namespace http {
-namespace api {
 
 HTTPResponseImpl::HTTPResponseImpl() {
 	status = internal_server_error;
@@ -73,7 +72,6 @@ std::string HTTPResponseImpl::getContentAsString() {
 //}
 std::istream* HTTPResponseImpl::getStream() {
 	return stream;
-}
 }
 }
 }

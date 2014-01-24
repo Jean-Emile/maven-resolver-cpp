@@ -7,35 +7,37 @@
 #include "maven-resolver/api/MavenVersionComparator.h"
 
 #include <cstdlib>
-
 #include <iostream>
 
-void maven_resolver::api::VersionItem::setMajor(int _major) {
+namespace maven {
+namespace resolver {
+
+void VersionItem::setMajor(int _major) {
 	major = _major;
 }
-void maven_resolver::api::VersionItem::setMinor(int _minor) {
+void VersionItem::setMinor(int _minor) {
 	minor = _minor;
 }
-void maven_resolver::api::VersionItem::setIncremental(int _incremental) {
+void VersionItem::setIncremental(int _incremental) {
 	incremental = _incremental;
 }
-void maven_resolver::api::VersionItem::setQualifier(std::string _qualifier) {
+void VersionItem::setQualifier(std::string _qualifier) {
 	qualifier = _qualifier;
 }
-int maven_resolver::api::VersionItem::getMajor() {
+int VersionItem::getMajor() {
 	return major;
 }
-int maven_resolver::api::VersionItem::getMinor() {
+int VersionItem::getMinor() {
 	return minor;
 }
-int maven_resolver::api::VersionItem::getIncremental() {
+int VersionItem::getIncremental() {
 	return incremental;
 }
-std::string maven_resolver::api::VersionItem::getQualifier() {
+std::string VersionItem::getQualifier() {
 	return qualifier;
 }
 
-int maven_resolver::api::VersionItem::compare(maven_resolver::api::VersionItem anotherVersion) {
+int VersionItem::compare(VersionItem anotherVersion) {
 	if (major == anotherVersion.getMajor()) {
 		if (minor == anotherVersion.getMinor()) {
 			if (incremental == anotherVersion.getIncremental()) {
@@ -51,8 +53,8 @@ int maven_resolver::api::VersionItem::compare(maven_resolver::api::VersionItem a
 	}
 }
 
-maven_resolver::api::VersionItem * maven_resolver::api::MavenVersionComparator::parseVersion(std::string version) {
-	maven_resolver::api::VersionItem * versionItem = new maven_resolver::api::VersionItem();
+VersionItem * MavenVersionComparator::parseVersion(std::string version) {
+	VersionItem * versionItem = new VersionItem();
 	// find the number of element in the version <major>.<minor>.<incremental>-<qualifier>
 	int nbElement = 0;
 	int index = 0;
@@ -101,15 +103,15 @@ maven_resolver::api::VersionItem * maven_resolver::api::MavenVersionComparator::
 	return versionItem;
 }
 
-std::string maven_resolver::api::MavenVersionComparator::max(std::string version, std::string anotherVersion) {
+std::string MavenVersionComparator::max(std::string version, std::string anotherVersion) {
 	if (version.compare("") != 0 && anotherVersion.compare("") == 0) {
 		return version;
 	}
 	if (anotherVersion.compare("") != 0 && version.compare("") == 0) {
 		return anotherVersion;
 	}
-	maven_resolver::api::VersionItem* v1c = parseVersion(version);
-	maven_resolver::api::VersionItem* v2c = parseVersion(anotherVersion);
+	VersionItem* v1c = parseVersion(version);
+	VersionItem* v2c = parseVersion(anotherVersion);
 
 //	std::cout << version << " compare to " << anotherVersion << " == " << v1c->compare(*v2c) << std::endl;
 	bool compare = v1c->compare(*v2c) < 0;
@@ -126,3 +128,6 @@ std::string maven_resolver::api::MavenVersionComparator::max(std::string version
 	return version;
 }
 
+
+}
+}

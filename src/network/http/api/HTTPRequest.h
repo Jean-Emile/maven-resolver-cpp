@@ -9,11 +9,10 @@
 #define REQUEST_H_
 
 #include <string>
-#include <vector>
+#include <map>
 
 namespace network {
 namespace http {
-namespace api {
 class HTTPRequest {
 private:
 	std::string method;
@@ -32,7 +31,6 @@ public:
 	std::map<std::string, std::string> const& getHeaders() const;
 };
 
-}
 }
 }
 #endif /* REQUEST_H_ */

@@ -10,8 +10,8 @@
 
 #include <string>
 
-namespace maven_resolver {
-namespace api {
+namespace maven {
+namespace resolver {
 
 class VersionItem {
 private:
@@ -36,7 +36,7 @@ class MavenVersionComparator {
 public:
 	std::string max(std::string version, std::string otherVersion);
 private:
-	maven_resolver::api::VersionItem * parseVersion(std::string version);
+	VersionItem * parseVersion(std::string version);
 };
 
 }

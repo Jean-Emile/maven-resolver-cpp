@@ -35,7 +35,6 @@ add_executable(
         ${maven_resolver_src_files}
 )
 TARGET_LINK_LIBRARIES(mavenResolverMain 	boost_system)
-TARGET_LINK_LIBRARIES(mavenResolverMain 	boost_thread)
 TARGET_LINK_LIBRARIES(mavenResolverMain 	boost_regex)
 TARGET_LINK_LIBRARIES(mavenResolverMain 	boost_filesystem)
 TARGET_LINK_LIBRARIES(mavenResolverMain 	http-client)

@@ -1,4 +1,4 @@
-#include "maven-resolver/impl/MavenVersionResolver.h"
+#include "maven-resolver/api/MavenVersionResolver.h"
 
 #include <boost/regex.hpp>
 #include <fstream>
@@ -6,18 +6,20 @@
 #include "maven-resolver/api/Utilities.h"
 #include "network/http/api/HTTP.h"
 #include "network/http/api/Status.h"
+namespace maven {
+namespace resolver {
 
-maven_resolver::impl::MavenVersionResolver::MavenVersionResolver() {
-	mavenDownloader = new maven_resolver::impl::MavenDownloader();
+MavenVersionResolver::MavenVersionResolver() {
+	mavenDownloader = new MavenDownloader();
 }
 
-maven_resolver::impl::MavenVersionResolver::~MavenVersionResolver() {
+MavenVersionResolver::~MavenVersionResolver() {
 	delete mavenDownloader;
 }
 
-maven_resolver::api::MavenVersionResult* maven_resolver::impl::MavenVersionResolver::resolveVersion(maven_resolver::api::MavenArtefact artefact, std::string cachePath,
+MavenVersionResult* MavenVersionResolver::resolveVersion(MavenArtefact artefact, std::string cachePath,
 		std::string remoteURL, bool localDeploy) {
-	maven_resolver::api::MavenVersionResult *result = NULL;
+	MavenVersionResult *result = NULL;
 	std::string fileContent;
 
 	std::string filePath = buildCacheFilePath(artefact, cachePath, remoteURL, localDeploy);
@@ -25,7 +27,7 @@ maven_resolver::api::MavenVersionResult* maven_resolver::impl::MavenVersionResol
 	if (!localDeploy) {
 		if (std::fstream(filePath.c_str()).fail()) {
 //			std::cout << "Creating directories to store metadata file: " << filePath << std::endl;
-			maven_resolver::api::mkdirs(filePath);
+			mkdirs(filePath);
 		}
 		std::list<std::string> repo;
 		repo.push_back(remoteURL);
@@ -34,7 +36,7 @@ maven_resolver::api::MavenVersionResult* maven_resolver::impl::MavenVersionResol
 	}
 //	std::cout << "Metadata file to read: " << filePath << std::endl;
 
-	fileContent = maven_resolver::api::readFile(filePath);
+	fileContent = readFile(filePath);
 
 //	std::cout << fileContent << std::endl;
 
@@ -64,9 +66,9 @@ maven_resolver::api::MavenVersionResult* maven_resolver::impl::MavenVersionResol
 	return result;
 }
 
-maven_resolver::api::MavenVersionResult* maven_resolver::impl::MavenVersionResolver::foundRelevantVersion(maven_resolver::api::MavenArtefact artefact, std::string cachePath,
+MavenVersionResult* MavenVersionResolver::foundRelevantVersion(MavenArtefact artefact, std::string cachePath,
 		std::string remoteURL, bool localDeploy) {
-	std::string askedVersion = maven_resolver::api::toLower(artefact.getVersion());
+	std::string askedVersion = toLower(artefact.getVersion());
 
 	bool release = false;
 	bool latest = false;
@@ -83,7 +85,7 @@ maven_resolver::api::MavenVersionResult* maven_resolver::impl::MavenVersionResol
 	std::string cacheFilePath = buildCacheFilePath(artefact, cachePath, remoteURL, localDeploy);
 	std::fstream cacheFile(cacheFilePath.c_str());
 	if (cacheFile.fail()) {
-		maven_resolver::api::mkdirs(cacheFilePath);
+		mkdirs(cacheFilePath);
 	}
 	std::string buffer;
 	if (!localDeploy) {
@@ -95,11 +97,11 @@ maven_resolver::api::MavenVersionResult* maven_resolver::impl::MavenVersionResol
 
 //	std::cout << "Metadata file to read: " << cacheFilePath << std::endl;
 
-	buffer = maven_resolver::api::readFile(cacheFilePath);
+	buffer = readFile(cacheFilePath);
 
 //	std::cout << buffer << std::endl;
 
-	maven_resolver::api::MavenVersionResult* version = NULL;
+	MavenVersionResult* version = NULL;
 	if (buffer.length() != 0) {
 		if (localDeploy) {
 			version = resolveVersionFromLocal(artefact, buffer, release, latest);
@@ -114,36 +116,36 @@ maven_resolver::api::MavenVersionResult* maven_resolver::impl::MavenVersionResol
 	return version;
 }
 
-std::string maven_resolver::impl::MavenVersionResolver::buildCacheFilePath(maven_resolver::api::MavenArtefact artefact, std::string basePath, std::string remoteURL,
+std::string MavenVersionResolver::buildCacheFilePath(MavenArtefact artefact, std::string basePath, std::string remoteURL,
 		bool localDeploy) {
 	std::string filePath;
 	filePath.append(basePath);
 	filePath.append(PATH_SEPARATOR);
 
 	std::string newString = artefact.getGroup();
-	newString = maven_resolver::api::replace(newString, ".", maven_resolver::api::fileSeparator);
+	newString = replace(newString, ".", fileSeparator);
 
 	filePath.append(newString);
 	filePath.append(PATH_SEPARATOR);
 	filePath.append(artefact.getName());
 	filePath.append(PATH_SEPARATOR);
 
-	std::string askedVersion = maven_resolver::api::toLower(artefact.getVersion());
+	std::string askedVersion = toLower(artefact.getVersion());
 	if (askedVersion.compare("release") != 0 && askedVersion.compare("latest") != 0) {
 		filePath.append(artefact.getVersion());
 		filePath.append(PATH_SEPARATOR);
 	}
 
 	if (localDeploy) {
-		filePath.append(maven_resolver::api::localmetaFile);
+		filePath.append(localmetaFile);
 	} else {
-		filePath.append(maven_resolver::api::metaFile);
+		filePath.append(metaFile);
 		filePath.append("-");
 
 		newString = remoteURL;
-		newString = maven_resolver::api::replace(newString, "/", "_");
-		newString = maven_resolver::api::replace(newString, ":", "_");
-		newString = maven_resolver::api::replace(newString, ".", "_");
+		newString = replace(newString, "/", "_");
+		newString = replace(newString, ":", "_");
+		newString = replace(newString, ".", "_");
 		filePath.append(newString);
 	}
 
@@ -151,9 +153,9 @@ std::string maven_resolver::impl::MavenVersionResolver::buildCacheFilePath(maven
 	return filePath;
 }
 
-maven_resolver::api::MavenVersionResult* maven_resolver::impl::MavenVersionResolver::resolveVersionFromLocal(maven_resolver::api::MavenArtefact artefact,
+MavenVersionResult* MavenVersionResolver::resolveVersionFromLocal(MavenArtefact artefact,
 		std::string metaFileContent, bool release, bool latest) {
-	maven_resolver::api::MavenVersionResult* version = NULL;
+	MavenVersionResult* version = NULL;
 
 	std::string versionString = "<version>(\\d+(\\.\\d+)?(\\.\\d+)?(-\\w+)?)</version>";
 	boost::regex versionRegex;
@@ -170,11 +172,11 @@ maven_resolver::api::MavenVersionResult* maven_resolver::impl::MavenVersionResol
 
 //		std::cout << loopVersion << std::endl;
 
-		maven_resolver::api::trim(loopVersion);
+		trim(loopVersion);
 		if (release) {
-			if (maven_resolver::api::toLower(loopVersion).find(maven_resolver::api::SNAPSHOT_VERSION_END) == std::string::npos) {
+			if (toLower(loopVersion).find(SNAPSHOT_VERSION_END) == std::string::npos) {
 				if (version == NULL) {
-					version = new maven_resolver::api::MavenVersionResult();
+					version = new MavenVersionResult();
 					version->setValue("0");
 				}
 //				std::cout << "Setting value between " << version->getValue() << " and " << loopVersion << std::endl;
@@ -182,7 +184,7 @@ maven_resolver::api::MavenVersionResult* maven_resolver::impl::MavenVersionResol
 			}
 		} else {
 			if (version == NULL) {
-				version = new maven_resolver::api::MavenVersionResult();
+				version = new MavenVersionResult();
 				version->setValue("0");
 			}
 //			std::cout << "Setting value between " << version->getValue() << " and " << loopVersion << std::endl;
@@ -197,26 +199,26 @@ maven_resolver::api::MavenVersionResult* maven_resolver::impl::MavenVersionResol
 	return version;
 }
 
-maven_resolver::api::MavenVersionResult* maven_resolver::impl::MavenVersionResolver::resolveVersionFromRemote(maven_resolver::api::MavenArtefact artefact,
+MavenVersionResult* MavenVersionResolver::resolveVersionFromRemote(MavenArtefact artefact,
 		std::string metaFileContent, bool release, bool latest) {
-	maven_resolver::api::MavenVersionResult* version = NULL;
+	MavenVersionResult* version = NULL;
 	if (release) {
-		int buildReleaseTagIndex = metaFileContent.find(maven_resolver::api::buildReleaseTag);
-		int buildEndreleaseTagIndex = metaFileContent.find(maven_resolver::api::buildEndreleaseTag);
+		int buildReleaseTagIndex = metaFileContent.find(buildReleaseTag);
+		int buildEndreleaseTagIndex = metaFileContent.find(buildEndreleaseTag);
 		if (buildReleaseTagIndex != std::string::npos && buildEndreleaseTagIndex != std::string::npos) {
-			version = new maven_resolver::api::MavenVersionResult();
+			version = new MavenVersionResult();
 			version->setValue(
-					metaFileContent.substr(buildReleaseTagIndex + maven_resolver::api::buildReleaseTag.length(),
-							buildEndreleaseTagIndex - (buildReleaseTagIndex + maven_resolver::api::buildReleaseTag.length())));
+					metaFileContent.substr(buildReleaseTagIndex + buildReleaseTag.length(),
+							buildEndreleaseTagIndex - (buildReleaseTagIndex + buildReleaseTag.length())));
 		}
 	} else if (latest) {
-		int buildLatestTagIndex = metaFileContent.find(maven_resolver::api::buildLatestTag);
-		int buildEndLatestTagIndex = metaFileContent.find(maven_resolver::api::buildEndLatestTag);
+		int buildLatestTagIndex = metaFileContent.find(buildLatestTag);
+		int buildEndLatestTagIndex = metaFileContent.find(buildEndLatestTag);
 		if (buildLatestTagIndex != std::string::npos && buildEndLatestTagIndex != std::string::npos) {
-			version = new maven_resolver::api::MavenVersionResult();
+			version = new MavenVersionResult();
 			version->setValue(
-					metaFileContent.substr(buildLatestTagIndex + maven_resolver::api::buildLatestTag.length(),
-							buildEndLatestTagIndex - (buildLatestTagIndex + maven_resolver::api::buildLatestTag.length())));
+					metaFileContent.substr(buildLatestTagIndex + buildLatestTag.length(),
+							buildEndLatestTagIndex - (buildLatestTagIndex + buildLatestTag.length())));
 		}
 	} else {
 		std::string snapshotVersionsString = "<snapshotVersion>(\\s|(?!(</snapshotVersion>)).)*</snapshotVersion>";
@@ -228,66 +230,69 @@ maven_resolver::api::MavenVersionResult* maven_resolver::impl::MavenVersionResol
 		boost::match_results<std::string::const_iterator> whatSnapshotVersions;
 		boost::match_flag_type flags = boost::match_default;
 		while (boost::regex_search(snapshotVersionStart, snapshotVersionEnd, whatSnapshotVersions, snapshotVersionsRegex, flags) && version == NULL) {
-			std::string snapshotVersion = maven_resolver::api::trim(whatSnapshotVersions[0].str());
+			std::string snapshotVersion = trim(whatSnapshotVersions[0].str());
 
 //			std::cout << std::endl << std::endl << snapshotVersion << std::endl << std::endl;
 
-			int snapshotVersionClassifierMavenTagIndex = snapshotVersion.find(maven_resolver::api::snapshotVersionClassifierMavenTag);
-			int snapshotVersionClassifierEndMavenTagIndex = snapshotVersion.find(maven_resolver::api::snapshotVersionClassifierEndMavenTag);
-			int snapshotVersionValueMavenTagIndex = snapshotVersion.find(maven_resolver::api::snapshotVersionValueMavenTag);
-			int snapshotVersionValueEndMavenTagIndex = snapshotVersion.find(maven_resolver::api::snapshotVersionValueEndMavenTag);
-			int snapshotVersionUpdatedMavenTagIndex = snapshotVersion.find(maven_resolver::api::snapshotVersionUpdatedMavenTag);
-			int snapshotVersionUpdatedEndMavenTagIndex = snapshotVersion.find(maven_resolver::api::snapshotVersionUpdatedEndMavenTag);
-			int snapshotVersionExtensionMavenTagIndex = snapshotVersion.find(maven_resolver::api::snapshotVersionExtensionMavenTag);
-			int snapshotVersionExtensionEndMavenTagIndex = snapshotVersion.find(maven_resolver::api::snapshotVersionExtensionEndMavenTag);
+			int snapshotVersionClassifierMavenTagIndex = snapshotVersion.find(snapshotVersionClassifierMavenTag);
+			int snapshotVersionClassifierEndMavenTagIndex = snapshotVersion.find(snapshotVersionClassifierEndMavenTag);
+			int snapshotVersionValueMavenTagIndex = snapshotVersion.find(snapshotVersionValueMavenTag);
+			int snapshotVersionValueEndMavenTagIndex = snapshotVersion.find(snapshotVersionValueEndMavenTag);
+			int snapshotVersionUpdatedMavenTagIndex = snapshotVersion.find(snapshotVersionUpdatedMavenTag);
+			int snapshotVersionUpdatedEndMavenTagIndex = snapshotVersion.find(snapshotVersionUpdatedEndMavenTag);
+			int snapshotVersionExtensionMavenTagIndex = snapshotVersion.find(snapshotVersionExtensionMavenTag);
+			int snapshotVersionExtensionEndMavenTagIndex = snapshotVersion.find(snapshotVersionExtensionEndMavenTag);
 
 			if ((snapshotVersionClassifierMavenTagIndex == std::string::npos
-					|| maven_resolver::api::toLower("sources").compare(
-							snapshotVersion.substr(snapshotVersionClassifierMavenTagIndex + maven_resolver::api::snapshotVersionClassifierMavenTag.length(),
-									snapshotVersion.find(maven_resolver::api::snapshotVersionClassifierEndMavenTag)
-											- (snapshotVersionClassifierMavenTagIndex + maven_resolver::api::snapshotVersionClassifierMavenTag.length()))) == 0)
+					|| toLower("sources").compare(
+							snapshotVersion.substr(snapshotVersionClassifierMavenTagIndex + snapshotVersionClassifierMavenTag.length(),
+									snapshotVersion.find(snapshotVersionClassifierEndMavenTag)
+											- (snapshotVersionClassifierMavenTagIndex + snapshotVersionClassifierMavenTag.length()))) == 0)
 					&& snapshotVersionValueMavenTagIndex != std::string::npos && snapshotVersionUpdatedMavenTagIndex != std::string::npos
 					&& (snapshotVersionExtensionMavenTagIndex == std::string::npos
 							|| artefact.getExtension().compare(
-									snapshotVersion.substr(snapshotVersionExtensionMavenTagIndex + maven_resolver::api::snapshotVersionExtensionMavenTag.length(),
-											snapshotVersion.find(maven_resolver::api::snapshotVersionExtensionEndMavenTag)
-													- (snapshotVersionExtensionMavenTagIndex + maven_resolver::api::snapshotVersionExtensionMavenTag.length()))) == 0)) {
+									snapshotVersion.substr(snapshotVersionExtensionMavenTagIndex + snapshotVersionExtensionMavenTag.length(),
+											snapshotVersion.find(snapshotVersionExtensionEndMavenTag)
+													- (snapshotVersionExtensionMavenTagIndex + snapshotVersionExtensionMavenTag.length()))) == 0)) {
 
-				version = new maven_resolver::api::MavenVersionResult();
+				version = new MavenVersionResult();
 				version->setValue(
-						snapshotVersion.substr(snapshotVersionValueMavenTagIndex + maven_resolver::api::snapshotVersionValueMavenTag.length(),
-								snapshotVersionValueEndMavenTagIndex - (snapshotVersionValueMavenTagIndex + maven_resolver::api::snapshotVersionValueMavenTag.length())));
+						snapshotVersion.substr(snapshotVersionValueMavenTagIndex + snapshotVersionValueMavenTag.length(),
+								snapshotVersionValueEndMavenTagIndex - (snapshotVersionValueMavenTagIndex + snapshotVersionValueMavenTag.length())));
 				version->setLastUpdate(
-						snapshotVersion.substr(snapshotVersionUpdatedMavenTagIndex + maven_resolver::api::snapshotVersionUpdatedMavenTag.length(),
-								snapshotVersionUpdatedEndMavenTagIndex - (snapshotVersionUpdatedMavenTagIndex + maven_resolver::api::snapshotVersionUpdatedMavenTag.length())));
+						snapshotVersion.substr(snapshotVersionUpdatedMavenTagIndex + snapshotVersionUpdatedMavenTag.length(),
+								snapshotVersionUpdatedEndMavenTagIndex - (snapshotVersionUpdatedMavenTagIndex + snapshotVersionUpdatedMavenTag.length())));
 			}
 
 			snapshotVersionStart = whatSnapshotVersions[0].second;
 		}
 		if (version == NULL) {
-			int timestampMavenTagIndex = metaFileContent.find(maven_resolver::api::timestampMavenTag);
-			int timestampEndMavenTagIndex = metaFileContent.find(maven_resolver::api::timestampEndMavenTag);
-			int buildMavenTagIndex = metaFileContent.find(maven_resolver::api::buildMavenTag);
-			int buildEndMavenTagIndex = metaFileContent.find(maven_resolver::api::buildEndMavenTag);
-			int lastUpdatedMavenTagIndex = metaFileContent.find(maven_resolver::api::lastUpdatedMavenTag);
-			int lastUpdatedEndMavenTagIndex = metaFileContent.find(maven_resolver::api::lastUpdatedEndMavenTag);
+			int timestampMavenTagIndex = metaFileContent.find(timestampMavenTag);
+			int timestampEndMavenTagIndex = metaFileContent.find(timestampEndMavenTag);
+			int buildMavenTagIndex = metaFileContent.find(buildMavenTag);
+			int buildEndMavenTagIndex = metaFileContent.find(buildEndMavenTag);
+			int lastUpdatedMavenTagIndex = metaFileContent.find(lastUpdatedMavenTag);
+			int lastUpdatedEndMavenTagIndex = metaFileContent.find(lastUpdatedEndMavenTag);
 
 			if (timestampMavenTagIndex != std::string::npos && timestampEndMavenTagIndex != std::string::npos && buildMavenTagIndex != std::string::npos
 					&& buildEndMavenTagIndex != std::string::npos && lastUpdatedMavenTagIndex != std::string::npos && lastUpdatedEndMavenTagIndex != std::string::npos) {
 
-				version = new maven_resolver::api::MavenVersionResult();
+				version = new MavenVersionResult();
 				version->setValue(
-						metaFileContent.substr(timestampMavenTagIndex + maven_resolver::api::timestampMavenTag.length(),
-								timestampEndMavenTagIndex - (timestampMavenTagIndex + maven_resolver::api::timestampMavenTag.length())) + "-"
-								+ metaFileContent.substr(buildMavenTagIndex + maven_resolver::api::buildMavenTag.length(),
-										buildEndMavenTagIndex - (buildMavenTagIndex + maven_resolver::api::buildMavenTag.length())));
+						metaFileContent.substr(timestampMavenTagIndex + timestampMavenTag.length(),
+								timestampEndMavenTagIndex - (timestampMavenTagIndex + timestampMavenTag.length())) + "-"
+								+ metaFileContent.substr(buildMavenTagIndex + buildMavenTag.length(),
+										buildEndMavenTagIndex - (buildMavenTagIndex + buildMavenTag.length())));
 				version->setLastUpdate(
-						metaFileContent.substr(lastUpdatedMavenTagIndex + maven_resolver::api::lastUpdatedMavenTag.length(),
-								lastUpdatedEndMavenTagIndex - (lastUpdatedMavenTagIndex + maven_resolver::api::lastUpdatedMavenTag.length())));
+						metaFileContent.substr(lastUpdatedMavenTagIndex + lastUpdatedMavenTag.length(),
+								lastUpdatedEndMavenTagIndex - (lastUpdatedMavenTagIndex + lastUpdatedMavenTag.length())));
 
 			}
 		}
 	}
 //	std::cout << "Returning version from Remote: " << version << " " << version->getValue() << std::endl;
 	return version;
+}
+
+}
 }

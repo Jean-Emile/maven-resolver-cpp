@@ -1,39 +1,45 @@
 #include "maven-resolver/api/MavenArtefact.h"
 
-maven_resolver::api::MavenArtefact::MavenArtefact() {
+namespace maven {
+namespace resolver {
+
+MavenArtefact::MavenArtefact() {
 }
 
-maven_resolver::api::MavenArtefact::~MavenArtefact() {
+MavenArtefact::~MavenArtefact() {
 }
 
-std::string maven_resolver::api::MavenArtefact::getExtension() {
+std::string MavenArtefact::getExtension() {
 	return extension;
 }
 
-void maven_resolver::api::MavenArtefact::setExtension(std::string _extension) {
+void MavenArtefact::setExtension(std::string _extension) {
 	extension = _extension;
 }
 
-std::string maven_resolver::api::MavenArtefact::getVersion() {
+std::string MavenArtefact::getVersion() {
 	return version;
 }
 
-void maven_resolver::api::MavenArtefact::setVersion(std::string _version) {
+void MavenArtefact::setVersion(std::string _version) {
 	version = _version;
 }
 
-std::string maven_resolver::api::MavenArtefact::getGroup() {
+std::string MavenArtefact::getGroup() {
 	return group;
 }
 
-void maven_resolver::api::MavenArtefact::setGroup(std::string _group) {
+void MavenArtefact::setGroup(std::string _group) {
 	group = _group;
 }
 
-std::string maven_resolver::api::MavenArtefact::getName() {
+std::string MavenArtefact::getName() {
 	return name;
 }
 
-void maven_resolver::api::MavenArtefact::setName(std::string _name) {
+void MavenArtefact::setName(std::string _name) {
 	name = _name;
+}
+
+}
 }
