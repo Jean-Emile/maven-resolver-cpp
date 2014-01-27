@@ -34,3 +34,5 @@ endif()
 
 #add_subdirectory (libs)
 add_subdirectory (src)
+add_subdirectory (src/tests/)
+

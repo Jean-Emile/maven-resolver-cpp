@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <list>
 #include <iostream>
+#include <stdlib.h>
 
 #include "maven-resolver/api/Utilities.h"
 namespace maven {
@@ -12,7 +13,8 @@ MavenResolver::MavenResolver() {
 	versionComparator = new MavenVersionComparator();
 	mavenDownloader = new MavenDownloader();
 	versionResolver = new MavenVersionResolver();
-	basePath = "/home/edaubert/.m2/repository"; // FIXME
+	//	mkstemp("/tmp/m2"); FIXME
+	this->basePath = "";
 }
 
 MavenResolver::~MavenResolver() {
@@ -20,6 +22,9 @@ MavenResolver::~MavenResolver() {
 	delete versionComparator;
 	delete mavenDownloader;
 
+}
+void MavenResolver::setBasePath(std::string path){
+	this->basePath = path;
 }
 
 std::string MavenResolver::resolve(std::string group, std::string name, std::string versionAsked, std::string extension, std::list<std::string> urls) {

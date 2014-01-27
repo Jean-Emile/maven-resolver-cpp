@@ -18,6 +18,7 @@ public:
 	std::string resolve(std::string group, std::string name, std::string versionAsked, std::string extension, std::list<std::string> urls);
 	std::string resolve(MavenArtefact artefact, std::list<std::string> urls);
 	std::string getArtefactLocalBasePath(MavenArtefact artefact);
+	void setBasePath(std::string path);
 
 private:
 	MavenVersionResolver *versionResolver;
