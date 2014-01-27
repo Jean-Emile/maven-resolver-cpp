@@ -15,26 +15,14 @@ file(GLOB_RECURSE network_src_files network/*)
 
 message("maven-resolver sources: ${maven_resolver_src_files}\n")
 message("network sources: ${network_src_files}\n")
-#ADD_LIBRARY(maven-resolver-cpp  STATIC    ${maven-resolver-cpp-files})
 
-#COMPILE HTTPClientTester
-add_executable(
-        httpClientMain
-        network/http/main.cpp
-        ${network_src_files}
-)
-TARGET_LINK_LIBRARIES(httpClientMain 	boost_system)
-TARGET_LINK_LIBRARIES(httpClientMain 	boost_thread)
 
 
 ADD_LIBRARY(http-client  STATIC  ${network_src_files})
 
-add_executable(
-        mavenResolverMain
-        maven-resolver/main.cpp
-        ${maven_resolver_src_files}
-)
-TARGET_LINK_LIBRARIES(mavenResolverMain 	boost_system)
-TARGET_LINK_LIBRARIES(mavenResolverMain 	boost_regex)
-TARGET_LINK_LIBRARIES(mavenResolverMain 	boost_filesystem)
-TARGET_LINK_LIBRARIES(mavenResolverMain 	http-client)
+ADD_LIBRARY(maven-resolver-cpp   STATIC  ${maven_resolver_src_files})
+TARGET_LINK_LIBRARIES(maven-resolver-cpp 	boost_system)
+TARGET_LINK_LIBRARIES(maven-resolver-cpp 	boost_regex)
+TARGET_LINK_LIBRARIES(maven-resolver-cpp 	boost_filesystem)
+TARGET_LINK_LIBRARIES(maven-resolver-cpp 	http-client)
+
