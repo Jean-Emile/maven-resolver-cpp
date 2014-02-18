@@ -61,13 +61,13 @@ HTTPResponse * BoostHTTPClient::doGet(HTTPRequest const& request) {
 		std::string * values = new std::string[3];
 		parseURL(request.getUrl(), values);
 
-		//std::cout << "Host: " << values[0] << std::endl << "Port: " << values[1] << std::endl << "Query: " << values[2] << std::endl;
+//		std::cout << "Host: " << values[0] << std::endl << "Port: " << values[1] << std::endl << "Query: " << values[2] << std::endl;
 
 		// TODO protect if there is no network
 
 		// Get a list of endpoints corresponding to the server name.
 		boost::asio::ip::tcp::resolver resolver(io_service);
-		boost::asio::ip::tcp::resolver::query query(values[0], "http");
+		boost::asio::ip::tcp::resolver::query query(values[0], "80"); // replace http by 80 to not use /etc/services
 		boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
 
 		// Try each endpoint until we successfully establish a connection.

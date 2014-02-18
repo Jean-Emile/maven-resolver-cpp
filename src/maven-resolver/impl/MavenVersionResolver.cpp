@@ -26,15 +26,15 @@ MavenVersionResult* MavenVersionResolver::resolveVersion(MavenArtefact artefact,
 
 	if (!localDeploy) {
 		if (std::fstream(filePath.c_str()).fail()) {
-//			std::cout << "Creating directories to store metadata file: " << filePath << std::endl;
+		//	std::cout << "Creating directories to store metadata file: " << filePath << std::endl;
 			mkdirs(filePath);
 		}
 		std::list<std::string> repo;
 		repo.push_back(remoteURL);
-//		std::cout << "Trying to resolve metaData \"" << filePath << "\" on " << remoteURL << std::endl;
+	//	std::cout << "Trying to resolve metaData \"" << filePath << "\" on " << remoteURL << std::endl;
 		mavenDownloader->downloadMetadata(filePath, artefact, artefact.getVersion(), repo);
 	}
-//	std::cout << "Metadata file to read: " << filePath << std::endl;
+	//std::cout << "Metadata file to read: " << filePath << std::endl;
 
 	fileContent = readFile(filePath);
 

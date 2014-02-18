@@ -32,6 +32,7 @@ bool MavenDownloader::downloadArtefact(std::string targetFilePath, MavenArtefact
 		try {
 			//BUILD HTTP URL
 			std::string url = buildUrl(artefact, resolvedVersion, *it, false);
+			std::cout << "Downloading File  => " << url << std::endl;
 			//DOWNLOAD FILE
 			return downloadFile(targetFilePath, url, std::ios::out | std::ios::binary | std::ios::trunc);
 		} catch (std::exception & e) {
@@ -43,16 +44,18 @@ bool MavenDownloader::downloadArtefact(std::string targetFilePath, MavenArtefact
 	return false;
 
 }
-bool MavenDownloader::downloadMetadata(std::string targetFilePath, MavenArtefact artefact, std::string resolvedVersion,
-		std::list<std::string> repoUrls) {
+bool MavenDownloader::downloadMetadata(std::string targetFilePath, MavenArtefact artefact, std::string resolvedVersion,std::list<std::string> repoUrls) {
 	for (std::list<std::string>::iterator it = repoUrls.begin(); it != repoUrls.end(); it++) {
-		try {
-			//BUILD HTTP URL
-			std::string url = buildUrl(artefact, resolvedVersion, *it, true);
+		//BUILD HTTP URL
+		std::string url = buildUrl(artefact, resolvedVersion, *it, true);
+		//std::cout << "downloadMetadata" <<  " " << url << std::endl;
+		try
+		{
 			//DOWNLOAD FILE
 			return downloadFile(targetFilePath, url, std::ios::out | std::ios::trunc);
 		} catch (std::exception & e) {
 			//TODO CLEANUP FILE IF CORRUPTED
+			std::cerr << "ERROR : downloadMetadata" <<  " " << url <<  e.what() << std::endl;
 			return false;
 		}
 
@@ -82,10 +85,10 @@ bool MavenDownloader::downloadFile(std::string targetFilePath, std::string url, 
 		file << out.str();
 		file.flush();
 		file.close();
-//		std::cout << "File saved on " << targetFilePath << std::endl;
+		//std::cout << "File saved on " << targetFilePath << std::endl;
 		result = true;
 	} else {
-//		std::cerr << "HTTP Status of the response (" << response->getStatus() << ") for url: " << url << std::endl;
+		std::cerr << "HTTP Status of the response (" << response->getStatus() << ") for url: " << url << std::endl;
 		result = false;
 	}
 	delete response;

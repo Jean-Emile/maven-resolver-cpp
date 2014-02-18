@@ -13,7 +13,6 @@ MavenResolver::MavenResolver() {
 	versionComparator = new MavenVersionComparator();
 	mavenDownloader = new MavenDownloader();
 	versionResolver = new MavenVersionResolver();
-	//	mkstemp("/tmp/m2"); FIXME
 	this->basePath = "";
 }
 
@@ -42,30 +41,30 @@ std::string MavenResolver::resolve(MavenArtefact artefact, std::list<std::string
 
 	std::string versionToLower = toLower(artefact.getVersion()); //transform(artefact.getVersion().begin(), artefact.getVersion().end(), artefact.getVersion().begin(), tolower);
 	if (versionToLower.compare("release") == 0 || versionToLower.compare("latest") == 0) {
-//		MavenVersionResult* vremoteSaved = versionResolver->foundRelevantVersion(artefact, basePath, basePath, false);
+		//		MavenVersionResult* vremoteSaved = versionResolver->foundRelevantVersion(artefact, basePath, basePath, false);
 		MavenVersionResult* vlocalSaved = versionResolver->foundRelevantVersion(artefact, basePath, "", true);
-//		if (vremoteSaved != NULL) {
-//			artefact.setVersion(versionComparator->max(artefact.getVersion(), vremoteSaved->getValue()));
-//		}
+		//		if (vremoteSaved != NULL) {
+		//			artefact.setVersion(versionComparator->max(artefact.getVersion(), vremoteSaved->getValue()));
+		//		}
 		if (vlocalSaved != NULL) {
-//			std::cout << "Compare current version to the one get from the local repository" << std::endl;
+			//			std::cout << "Compare current version to the one get from the local repository" << std::endl;
 			artefact.setVersion(versionComparator->max(artefact.getVersion(), vlocalSaved->getValue()));
 		}
-//		delete vremoteSaved;
+		//		delete vremoteSaved;
 		delete vlocalSaved;
 
 		//FIXME managing multi threading for resolving version on each repositories
 		for (std::list<std::string>::iterator it = urls.begin(); it != urls.end(); it++) {
 			MavenVersionResult* tmpVersion = versionResolver->foundRelevantVersion(artefact, basePath, *it, false);
 			if (tmpVersion != NULL) {
-//				std::cout << "Compare current version to the one get from the repo: " << *it << std::endl;
+				//				std::cout << "Compare current version to the one get from the repo: " << *it << std::endl;
 				artefact.setVersion(versionComparator->max(artefact.getVersion(), tmpVersion->getValue()));
 			}
 			delete tmpVersion;
 		}
 	}
 
-//	std::cout << artefact.getVersion() << std::endl;
+	//	std::cout << artefact.getVersion() << std::endl;
 
 	if (artefact.getVersion().find(SNAPSHOT_VERSION_END) == std::string::npos) {
 		// try to find release artifact
@@ -96,10 +95,10 @@ std::string MavenResolver::resolve(MavenArtefact artefact, std::list<std::string
 
 		std::list<MavenVersionResult*> versions;
 		MavenVersionResult* localVersion;
-//			localVersion = versionResolver->resolveVersion(artefact, basePath, "", false);
-//			if (localVersion != NULL) {
-//				versions.push_back(localVersion);
-//			}
+		//			localVersion = versionResolver->resolveVersion(artefact, basePath, "", false);
+		//			if (localVersion != NULL) {
+		//				versions.push_back(localVersion);
+		//			}
 		localVersion = versionResolver->resolveVersion(artefact, basePath, "", true);
 		if (localVersion != NULL) {
 			versions.push_back(localVersion);
@@ -107,18 +106,18 @@ std::string MavenResolver::resolve(MavenArtefact artefact, std::list<std::string
 
 		// FIXME managing multi threading for resolving version on each repositories
 		for (std::list<std::string>::iterator it = urls.begin(); it != urls.end(); it++) {
-//			std::cout << "Trying to get metadata from " << *it << std::endl;
+					//	std::cout << "Trying to get metadata from " << *it << std::endl;
 			MavenVersionResult* version = versionResolver->resolveVersion(artefact, basePath, *it, false);
 			if (version != NULL) {
 				versions.push_back(version);
 			}
 		}
 
-//		std::cout << "Potential versions: ";
-//		for (std::list<MavenVersionResult*>::iterator it = versions.begin(); it != versions.end(); it++) {
-//			std::cout << (*it)->getValue() << ", ";
-//		}
-//		std::cout << std::endl;
+		//		std::cout << "Potential versions: ";
+		//		for (std::list<MavenVersionResult*>::iterator it = versions.begin(); it != versions.end(); it++) {
+		//			std::cout << (*it)->getValue() << ", ";
+		//		}
+		//		std::cout << std::endl;
 
 		if (versions.size() == 0) {
 			//not version at all , try simply the file with -SNAPSHOT extension
@@ -134,7 +133,7 @@ std::string MavenResolver::resolve(MavenArtefact artefact, std::list<std::string
 			if (isGood) {
 				return filePath;
 			} else {
-				std::cerr << "No metadata file found for " << artefact.getGroup() << "/" << artefact.getName() << "/" << artefact.getVersion();
+				std::cerr << "No metadata file found for " << artefact.getGroup() << "/" << artefact.getName() << "/" << artefact.getVersion() << std::endl;
 				return "";
 			}
 		} else {
@@ -191,15 +190,15 @@ std::string MavenResolver::resolve(MavenArtefact artefact, std::list<std::string
 						//Ok try on all urls, meta file has been download but not the artefact :(
 						if (mavenDownloader->downloadArtefact(filePath, artefact, preresolvedVersion2, urls)) {
 							//download the metafile
-//							std::cout << "File resolved remotly, download metafile" << std::endl;
+							//							std::cout << "File resolved remotly, download metafile" << std::endl;
 							std::string metaFilePath = filePath.substr(0, filePath.find_last_of(fileSeparator)) + fileSeparator
 									+ metaFile;
 							mkdirs(metaFilePath);
-//							std::fstream newMetaFile(metaFilePath.c_str(), std::ios_base::in | std::ios_base::out);
+							//							std::fstream newMetaFile(metaFilePath.c_str(), std::ios_base::in | std::ios_base::out);
 							mavenDownloader->downloadMetadata(metaFilePath, artefact, preresolvedVersion2, urls);
 							return filePath;
 						}
-//						std::cerr << ">" + bestVersion->toString() << std::endl;
+						//						std::cerr << ">" + bestVersion->toString() << std::endl;
 						return "";
 					}
 				} else {
@@ -220,9 +219,9 @@ std::string MavenResolver::resolve(MavenArtefact artefact, std::list<std::string
 						std::list<std::string> goodUrl;
 						goodUrl.push_back(bestVersion->getUrl_origin());
 						delete bestVersion;
-//						std::cout << "Trying to download artefact on " << bestVersion->getUrl_origin() << std::endl;
+						//						std::cout << "Trying to download artefact on " << bestVersion->getUrl_origin() << std::endl;
 						if (mavenDownloader->downloadArtefact(filePath, artefact, preresolvedVersion, goodUrl)) {
-//							std::cout << "File resolved remotly, download metafile" << std::endl;
+							//							std::cout << "File resolved remotly, download metafile" << std::endl;
 							//download the metafile
 							std::string metaFilePath = filePath.substr(0, filePath.find_last_of(fileSeparator)) + fileSeparator
 									+ metaFile;
@@ -231,13 +230,13 @@ std::string MavenResolver::resolve(MavenArtefact artefact, std::list<std::string
 							return filePath;
 						}
 						//not found
-//						std::cout << "Not resolved " << preresolvedVersion << " from " << bestVersion->getUrl_origin() << "/" << artefact.getGroup() << "/" << artefact.getName()
-//								<< "/" << artefact.getVersion() << std::endl;
+						//						std::cout << "Not resolved " << preresolvedVersion << " from " << bestVersion->getUrl_origin() << "/" << artefact.getGroup() << "/" << artefact.getName()
+						//								<< "/" << artefact.getVersion() << std::endl;
 						return "";
 					}
 				}
 			} else {
-//				std::cerr << "Not best version are found for " << artefact.getGroup() << "/" << artefact.getName() << "/" << artefact.getVersion() << std::endl;
+				//				std::cerr << "Not best version are found for " << artefact.getGroup() << "/" << artefact.getName() << "/" << artefact.getVersion() << std::endl;
 				delete bestVersion;
 				return "";
 			}
