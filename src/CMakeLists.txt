@@ -13,8 +13,8 @@ set(CMAKE_CXX_FLAGS "-g ${CMAKE_CXX_FLAGS}")
 file(GLOB_RECURSE maven_resolver_src_files maven-resolver/*)
 file(GLOB_RECURSE network_src_files network/*)
 
-message("maven-resolver sources: ${maven_resolver_src_files}\n")
-message("network sources: ${network_src_files}\n")
+#message("maven-resolver sources: ${maven_resolver_src_files}\n")
+#message("network sources: ${network_src_files}\n")
 
 
 
