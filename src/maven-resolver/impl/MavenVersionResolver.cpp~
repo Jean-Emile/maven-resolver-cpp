@@ -278,7 +278,7 @@ MavenVersionResult* MavenVersionResolver::resolveVersionFromRemote(MavenArtefact
 					&& buildEndMavenTagIndex != std::string::npos && lastUpdatedMavenTagIndex != std::string::npos && lastUpdatedEndMavenTagIndex != std::string::npos) {
 
 				version = new MavenVersionResult();
-				version->setValue("-" +
+				version->setValue(
 						metaFileContent.substr(timestampMavenTagIndex + timestampMavenTag.length(),
 								timestampEndMavenTagIndex - (timestampMavenTagIndex + timestampMavenTag.length())) + "-"
 								+ metaFileContent.substr(buildMavenTagIndex + buildMavenTag.length(),
