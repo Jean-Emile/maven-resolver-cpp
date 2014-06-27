@@ -21,8 +21,8 @@ file(GLOB_RECURSE network_src_files network/*)
 ADD_LIBRARY(http-client  STATIC  ${network_src_files})
 
 ADD_LIBRARY(maven-resolver-cpp   STATIC  ${maven_resolver_src_files})
-TARGET_LINK_LIBRARIES(maven-resolver-cpp 	boost_system)
-TARGET_LINK_LIBRARIES(maven-resolver-cpp 	boost_regex)
-TARGET_LINK_LIBRARIES(maven-resolver-cpp 	boost_filesystem)
+TARGET_LINK_LIBRARIES(maven-resolver-cpp 	boost_system-mt)
+TARGET_LINK_LIBRARIES(maven-resolver-cpp 	boost_regex-mt)
+TARGET_LINK_LIBRARIES(maven-resolver-cpp 	boost_filesystem-mt)
 TARGET_LINK_LIBRARIES(maven-resolver-cpp 	http-client)
 
