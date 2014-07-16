@@ -34,9 +34,9 @@ public:
 
 class MavenVersionComparator {
 public:
-	std::string max(std::string version, std::string otherVersion);
+	static std::string max(std::string version, std::string otherVersion);
 private:
-	VersionItem * parseVersion(std::string version);
+	static VersionItem * parseVersion(std::string version);
 };
 
 }

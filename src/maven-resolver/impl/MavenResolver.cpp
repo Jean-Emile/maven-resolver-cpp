@@ -10,7 +10,6 @@ namespace maven {
 namespace resolver {
 
 MavenResolver::MavenResolver() {
-	versionComparator = new MavenVersionComparator();
 	mavenDownloader = new MavenDownloader();
 	versionResolver = new MavenVersionResolver();
 	this->basePath = "";
@@ -18,9 +17,7 @@ MavenResolver::MavenResolver() {
 
 MavenResolver::~MavenResolver() {
 	delete versionResolver;
-	delete versionComparator;
 	delete mavenDownloader;
-
 }
 void MavenResolver::setBasePath(std::string path){
 	this->basePath = path;
@@ -48,7 +45,7 @@ std::string MavenResolver::resolve(MavenArtefact artefact, std::list<std::string
 		//		}
 		if (vlocalSaved != NULL) {
 			//			std::cout << "Compare current version to the one get from the local repository" << std::endl;
-			artefact.setVersion(versionComparator->max(artefact.getVersion(), vlocalSaved->getValue()));
+			artefact.setVersion(maven::resolver::MavenVersionComparator::max(artefact.getVersion(), vlocalSaved->getValue()));
 		}
 		//		delete vremoteSaved;
 		delete vlocalSaved;
@@ -58,7 +55,7 @@ std::string MavenResolver::resolve(MavenArtefact artefact, std::list<std::string
 			MavenVersionResult* tmpVersion = versionResolver->foundRelevantVersion(artefact, basePath, *it, false);
 			if (tmpVersion != NULL) {
 				//				std::cout << "Compare current version to the one get from the repo: " << *it << std::endl;
-				artefact.setVersion(versionComparator->max(artefact.getVersion(), tmpVersion->getValue()));
+				artefact.setVersion(maven::resolver::MavenVersionComparator::max(artefact.getVersion(), tmpVersion->getValue()));
 			}
 			delete tmpVersion;
 		}

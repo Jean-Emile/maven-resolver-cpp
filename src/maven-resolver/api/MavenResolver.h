@@ -22,7 +22,6 @@ public:
 
 private:
 	MavenVersionResolver *versionResolver;
-	MavenVersionComparator * versionComparator;
 	std::string basePath;
 	MavenDownloader * mavenDownloader;
 };
