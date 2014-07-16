@@ -6,7 +6,7 @@ maven URL resolver in C++
 A minimal but efficient and portable (self-contained) maven URL resolver in C++,
 it is a child project of  : https://github.com/dukeboard/basic-maven-resolver
 
-
+Continuous integration : https://drone.io/github.com/Jean-Emile/maven-resolver-cpp
 
 
 
