@@ -88,7 +88,7 @@ bool MavenDownloader::downloadFile(std::string targetFilePath, std::string url, 
 		//std::cout << "File saved on " << targetFilePath << std::endl;
 		result = true;
 	} else {
-		std::cerr << "HTTP Status of the response (" << response->getStatus() << ") for url: " << url << std::endl;
+		//std::cerr << "HTTP Status of the response (" << response->getStatus() << ") for url: " << url << std::endl;
 		result = false;
 	}
 	delete response;
